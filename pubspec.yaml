@@ -1,0 +1,25 @@
+name: gymrunners
+version: 0.1.0
+description: >-
+  GymRunners - Race against a virtual AI bot while tracking your run.
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: ^10.1.0
+  sensors_plus: ^4.0.2
+  flutter_tts: ^4.0.2
+  audioplayers: ^5.2.1
+  provider: ^6.1.2
+  # Placeholder for Windsurf AI integration
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/beep.mp3
