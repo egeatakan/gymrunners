@@ -100,6 +100,12 @@ class RunScreen extends StatelessWidget {
                   color: Colors.amber,
                 ),
                 _StatCard(
+                  icon: Icons.directions_walk,
+                  label: 'Steps',
+                  value: '${runTracker.totalSteps}',
+                  color: Colors.blueGrey,
+                ),
+                _StatCard(
                   icon: Icons.compare_arrows,
                   label: 'Time Diff',
                   value: '${runTracker.timeDifferenceFromBot} s',

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'run_screen.dart';
 import 'difficulty_screen.dart';
+import 'settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'src/run_tracker.dart';
@@ -11,8 +14,21 @@ void main() {
   runApp(const GymRunnersApp());
 }
 
-class GymRunnersApp extends StatelessWidget {
+class GymRunnersApp extends StatefulWidget {
   const GymRunnersApp({super.key});
+
+  @override
+  State<GymRunnersApp> createState() => _GymRunnersAppState();
+}
+
+class _GymRunnersAppState extends State<GymRunnersApp> {
+  Locale _locale = const Locale('en');
+
+  void _updateLocale(String langCode) {
+    setState(() {
+      _locale = Locale(langCode);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,26 +37,42 @@ class GymRunnersApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RunTracker()),
       ],
       child: MaterialApp(
+        locale: _locale,
         title: 'GymRunners',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           useMaterial3: true,
         ),
-        home: const HomeScreen(),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('tr'),
+          Locale('it'),
+        ],
+        home: HomeScreen(
+          onLocaleChanged: _updateLocale,
+          currentLocale: _locale.languageCode,
+        ),
       ),
     );
   }
 }
 
-
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final void Function(String lang)? onLocaleChanged;
+  final String? currentLocale;
+  const HomeScreen({super.key, this.onLocaleChanged, this.currentLocale});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> { // removed unused _selectedLang
   GestureDetectorService? _gestureService;
   AudioFeedbackService? _audioService;
   Timer? _proximityBeepTimer;
@@ -100,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _MenuButton(
             color: const Color(0xFF39627D),
             icon: Icons.play_arrow,
-            label: 'PLAY',
+            label: AppLocalizations.of(context)!.play,
             onTap: () async {
               final runTracker = Provider.of<RunTracker>(context, listen: false);
               final result = await Navigator.push(
@@ -129,27 +161,41 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           _MenuButton(
-            color: const Color(0xFF5C6973),
+            color: const Color(0xFF2A9D8F),
             icon: Icons.person,
-            label: 'MY PROFILE',
+            label: AppLocalizations.of(context)!.profile,
             onTap: () {},
           ),
           _MenuButton(
-            color: const Color(0xFF4F8A3F),
+            color: const Color(0xFF6A4C93),
             icon: Icons.bar_chart,
-            label: 'STATISTICS',
+            label: AppLocalizations.of(context)!.statistics,
             onTap: () {},
           ),
           _MenuButton(
             color: const Color(0xFFE6863A),
             icon: Icons.settings,
-            label: 'SETTINGS',
-            onTap: () {},
+            label: AppLocalizations.of(context)!.settings,
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SettingsScreen(
+                    currentLanguage: widget.currentLocale ?? 'en',
+                    onLanguageChanged: (lang) {
+                      if (widget.onLocaleChanged != null) {
+                        widget.onLocaleChanged!(lang);
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
           ),
           _MenuButton(
             color: const Color(0xFFD44E44),
             icon: Icons.exit_to_app,
-            label: 'EXIT',
+            label: AppLocalizations.of(context)!.exit,
             onTap: () {},
           ),
         ],
